@@ -1,0 +1,88 @@
+package lee.engback.newword.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import lee.engback.newword.entity.NewWord;
+import lee.engback.newword.model.NewWordDTO;
+import lee.engback.newword.service.NewWordService;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+// Ở PHIÊN BẢN CHO NEWWORD, SẼ DÙNG PHƯƠNG THỨC GIAO TIẾP TRUNG GIAN QUA DTO
+// NẾU MUỐN THAN KHẢO CÁCH DÙNG KO QUA DTO, THAM KHẢO BÊN MEMBERS
+
+@RestController
+@RequestMapping("/api/newwords")
+public class NewWordControllerAPI {
+
+    @Autowired
+    private NewWordService newWordService; // liên kết thông qua Dependency Injection của Spring
+
+    @GetMapping
+    public List<NewWordDTO> getAllNewWords() {
+        return newWordService.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<NewWordDTO> getNewWordById(@PathVariable int id) {
+        Optional<NewWord> newWord = newWordService.findById(id);
+        return newWord.map(value -> ResponseEntity.ok(convertToDTO(value)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public NewWordDTO createNewWord(@RequestBody NewWordDTO newWordDTO) {
+        NewWord newWord = convertToEntity(newWordDTO);
+        return convertToDTO(newWordService.saveNewWord(newWord));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<NewWordDTO> updateNewWord(@PathVariable int id, @RequestBody NewWordDTO newWordDTO) {
+        Optional<NewWord> newWord = newWordService.findById(id);
+        if (newWord.isPresent()) {
+            NewWord updatedNewWord = newWord.get();
+            updatedNewWord.setWord(newWordDTO.getWord());
+            updatedNewWord.setMeaning(newWordDTO.getMeaning());
+            updatedNewWord.setDate(newWordDTO.getDate());
+            updatedNewWord.setMaMember(newWordDTO.getMaMember());
+            return ResponseEntity.ok(convertToDTO(newWordService.saveNewWord(updatedNewWord)));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNewWord(@PathVariable int id) {
+        if (newWordService.existsById(id)) {
+            newWordService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    private NewWordDTO convertToDTO(NewWord newWord) {
+        return new NewWordDTO(
+                newWord.getId(),
+                newWord.getWord(),
+                newWord.getMeaning(),
+                newWord.getDate(),
+                newWord.getMaMember());
+    }
+    // PHẢI GÕ HẾT CẢ getMaMember() VÀO ĐÂY, NẾU KO SẼ BỊ LỖI
+    // VÌ TRONG ENTITY CÓ THÊM THUỘC TÍNH MAMEMBER
+
+    private NewWord convertToEntity(NewWordDTO newWordDTO) {
+        NewWord newWord = new NewWord();
+        newWord.setId(newWordDTO.getId());
+        newWord.setWord(newWordDTO.getWord());
+        newWord.setMeaning(newWordDTO.getMeaning());
+        newWord.setDate(newWordDTO.getDate());
+        newWord.setMaMember(newWordDTO.getMaMember());
+        return newWord;
+    }
+}

@@ -1,0 +1,36 @@
+1. Chạy ứng dụng Spring Boot
+PHẢI BUILD DỰ ÁN TRƯỚC KHI CHẠY
+
+Nếu bạn sử dụng Maven, chạy lệnh sau:
+mvn spring-boot:run
+
+Nếu bạn sử dụng Gradle, chạy lệnh sau:
+gradle bootRun
+
+2. Kiểm tra API
+Sau khi ứng dụng đã chạy, bạn có thể kiểm tra các API bằng cách sử dụng công cụ như Postman hoặc cURL.
+
+Sử dụng Postman
+Mở Postman.
+Tạo một yêu cầu mới và nhập URL của API (ví dụ: http://localhost:6868/api/members).
+Chọn phương thức HTTP (GET, POST, PUT, DELETE) và thiết lập các thông số cần thiết.
+Gửi yêu cầu và kiểm tra phản hồi.
+
+Sử dụng cURL
+Mở terminal hoặc command prompt.
+Sử dụng các lệnh cURL để gửi yêu cầu đến API. Ví dụ:
+
+GET tất cả thành viên:
+curl -X GET http://localhost:8080/api/members
+
+GET thành viên theo ID:
+curl -X GET http://localhost:8080/api/members/1
+
+POST tạo mới thành viên:
+curl -X POST http://localhost:8080/api/members -H "Content-Type: application/json" -d '{"fullName":"John Doe","phoneNumber":123456789,"email":"john.doe@example.com","password":"password","dateJoin":"2025-03-13","birthDay":"2000-01-01"}'
+
+PUT cập nhật thành viên:
+curl -X PUT http://localhost:8080/api/members/1 -H "Content-Type: application/json" -d '{"fullName":"John Doe Updated","phoneNumber":987654321,"email":"john.doe.updated@example.com","password":"newpassword","dateJoin":"2025-03-13","birthDay":"2000-01-01"}'
+
+DELETE thành viên:
+curl -X DELETE http://localhost:8080/api/members/1
