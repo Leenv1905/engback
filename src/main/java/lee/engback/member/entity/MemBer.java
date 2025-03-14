@@ -2,7 +2,6 @@ package lee.engback.member.entity;
 
 import java.sql.Date;
 // import static java.io.IO.print;
-import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "mem_ber") // Chỉ định đúng tên bảng trong database
 @Getter
 @Setter
 public class MemBer {

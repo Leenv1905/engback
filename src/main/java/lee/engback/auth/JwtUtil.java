@@ -1,6 +1,9 @@
 package lee.engback.auth;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+
+import org.springframework.beans.factory.annotation.Value;
 // import io.jsonwebtoken.io.Decoders;
 // import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
@@ -13,7 +16,13 @@ import javax.crypto.SecretKey;
 @Component
 public class JwtUtil {
 
-    private static final SecretKey key = Jwts.SIG.HS256.key().build(); // Tạo khóa mạnh >= 256 bits
+    // private static final SecretKey key = Jwts.SIG.HS256.key().build(); // Tạo khóa mạnh >= 256 bits, được tạo ngẫu nhiên sau mỗi lần khởi động
+    private final SecretKey key;
+
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
+    // Tạo khóa cố định, đọc từ application.properties
 
     public String generateToken(String email) {
         return Jwts.builder()
