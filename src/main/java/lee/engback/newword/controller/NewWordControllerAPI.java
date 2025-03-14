@@ -26,6 +26,13 @@ public class NewWordControllerAPI {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+        // Thêm endpoint để tìm kiếm theo maMember
+        @GetMapping("/{maMember}")
+        public List<NewWordDTO> getNewWordsByMaMember(@PathVariable int maMember) {
+            return newWordService.findByMaMember(maMember).stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+        }
 
     @GetMapping("/{id}")
     public ResponseEntity<NewWordDTO> getNewWordById(@PathVariable int id) {

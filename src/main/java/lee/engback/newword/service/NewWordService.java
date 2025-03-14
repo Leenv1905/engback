@@ -37,5 +37,10 @@ public class NewWordService {
         return jpaNewWord.existsById(id);
     }
 
-    // Các phương thức khác như tìm kiếm, cập nhật, xóa có thể được thêm vào đây
+        // Thêm phương thức tìm kiếm theo maMember
+    public List<NewWord> findByMaMember(int maMember) {
+        return jpaNewWord.findByMaMember(maMember);
+    }
+
+    // Các phương thức khác như tìm kiếm, lọc... thêm vào đây
 }
