@@ -4,6 +4,14 @@ PHẢI BUILD DỰ ÁN TRƯỚC KHI CHẠY
 Nếu bạn sử dụng Maven, chạy lệnh sau:
 mvn spring-boot:run
 
+BỎ QUA TEST TRONG KHI BUILD
+mvn clean install -DskipTests
+mvn spring-boot:run
+
+ Xóa thư mục target/ trên Windows PowerShell
+ Remove-Item -Recurse -Force target
+
+
 Nếu bạn sử dụng Gradle, chạy lệnh sau:
 gradle bootRun
 

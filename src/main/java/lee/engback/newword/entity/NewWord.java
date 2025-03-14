@@ -2,7 +2,7 @@ package lee.engback.newword.entity;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-
+import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "new_word") // Chỉ định đúng tên bảng
 @Getter
 @Setter
 public class NewWord {

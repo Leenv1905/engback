@@ -1,8 +1,8 @@
 package lee.engback.member.entity;
 
 import java.sql.Date;
-import static java.io.IO.print;
-
+// import static java.io.IO.print;
+import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "mem_ber") // Chỉ định đúng tên bảng trong database
 @Getter
 @Setter
 public class MemBer {
@@ -35,17 +36,32 @@ public class MemBer {
     public Boolean KhongHopLe() {
         var khl = false;
 
+                // if (this.fullName.length() < 2) {
+                //     khl = true;
+                //     print("\n Lỗi->Tên phải từ 2 kí tự trở lên: ");
+                // }
+        
+                // if (this.fullName.length() > 22) {
+                //     khl = true;
+                //     print("\n Lỗi->Tên phải không quá 22 kí tự. ");
+                // }
+
         if (this.fullName.length() < 2) {
             khl = true;
             print("\n Lỗi->Tên phải từ 2 kí tự trở lên: ");
-        }
+                    }
+            
+                    if (this.fullName.length() > 22) {
+                        khl = true;
+                        print("\n Lỗi->Tên phải không quá 22 kí tự. ");
+                    }
+            
+                    return khl;
+                }
 
-        if (this.fullName.length() > 22) {
-            khl = true;
-            print("\n Lỗi->Tên phải không quá 22 kí tự. ");
-        }
-
-        return khl;
-    }
+                private void print(String string) {
+                    // TODO Auto-generated method stub
+                    throw new UnsupportedOperationException("Unimplemented method 'print'");
+                }
 
 }

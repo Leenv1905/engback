@@ -1,7 +1,8 @@
 package lee.engback.member.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 // Bảo mật mật khẩu bằng spring security
 import org.springframework.stereotype.Service;
 import lee.engback.member.entity.MemBer;
@@ -16,15 +17,36 @@ public class MemBerService {
     @Autowired
     private JpaMemBer jpaMemBer;
 
+    @Autowired
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); // Inject PasswordEncoder
+    // Bảo mật mật khẩu bằng spring security
+
+    // public MemBer saveMemBer(MemBer memBer) {
+    // KHÔNG MÃ HÓA MẬT KHẨU
+    // memBer.setDateJoin(new java.sql.Date(System.currentTimeMillis()));
+    // return jpaMemBer.save(memBer); }
+
+    // MÃ HÓA MẬT KHẨU TRƯỚC KHI LƯU
     public MemBer saveMemBer(MemBer memBer) {
         memBer.setDateJoin(new java.sql.Date(System.currentTimeMillis()));
+        memBer.setPassword(passwordEncoder.encode(memBer.getPassword())); // Mã hóa mật khẩu
         return jpaMemBer.save(memBer);
     }
-    // public MemBer saveMemBer(MemBer memBer) {
-    //     memBer.setDateJoin(new java.sql.Date(System.currentTimeMillis()));
-    //     memBer.setPassword(passwordEncoder.encode(memBer.getPassword())); // Mã hóa mật khẩu
-    //     return jpaMemBer.save(memBer);
-    // }
+
+    // kiểm tra mật khẩu bằng passwordEncoder.matches(), chứ không so sánh trực tiếp
+    // chuỗi
+    public boolean checkPassword(String rawPassword, String encodedPassword) {
+        // return passwordEncoder.matches(rawPassword, encodedPassword); // Dùng BCrypt
+        // để kiểm tra mật khẩu
+        return rawPassword.equals(encodedPassword); // Không mã hóa, so sánh trực tiếp, DÙng tạm khi mật khẩu trong
+                                                    // database chưa mã hóa
+    }
+    // BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    // return passwordEncoder.matches(rawPassword, encodedPassword);
+
+    public Optional<MemBer> findByEmail(String email) { // Phương thức tìm kiếm theo email
+        return jpaMemBer.findByEmail(email);
+    }
 
     public List<MemBer> findAll() {
         return jpaMemBer.findAll();
