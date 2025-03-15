@@ -10,12 +10,13 @@ public class MemBerDTO {
     private String password;    // Password
     private Date dateJoin;    // Ngay tham gia
     private Date birthDay;    // Ngay sinh
+    private String roles;  // Vai trò người dùng
 
 
 public MemBerDTO() // hàm khởi tạo
 {
 }
-public MemBerDTO(int id, String fullName, Integer phoneNumber, String email, String password, Date dateJoin, Date birthDay) {
+public MemBerDTO(int id, String fullName, Integer phoneNumber, String email, String password, Date dateJoin, Date birthDay, String roles) {
     this.id = id;
     this.fullName = fullName;
     this.phoneNumber = phoneNumber;
@@ -23,6 +24,7 @@ public MemBerDTO(int id, String fullName, Integer phoneNumber, String email, Str
     this.password = password;
     this.dateJoin = dateJoin;
     this.birthDay = birthDay;
+    this.roles = roles;
 }
 
 // Getters and Setters
@@ -82,5 +84,7 @@ public void setBirthDay(Date birthDay) {
     this.birthDay = birthDay;
 }
 
+public String getRoles() { return roles; }
+    public void setRoles(String roles) { this.roles = roles; }
 
 }

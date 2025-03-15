@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,6 +18,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component // Thêm annotation này để Spring biết đây là một Bean
 public class JwtFilter extends OncePerRequestFilter {
@@ -42,24 +46,26 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-                String path = request.getRequestURI();
-                String method = request.getMethod();
+        String path = request.getRequestURI();
+        String method = request.getMethod();
         logger.debug("Processing request: {}", request.getRequestURI());
 
-// ✅ Nếu là /api/auth/login và đăng ký tài khoản (POST /api/members) → Bỏ qua kiểm tra JWT
-        if (request.getRequestURI().equals("/api/auth/login") || ("POST".equalsIgnoreCase(method) && path.equals("/api/members"))) {
+        // ✅ Nếu là /api/auth/login và đăng ký tài khoản (POST /api/members) → Bỏ qua
+        // kiểm tra JWT
+        if (request.getRequestURI().equals("/api/auth/login")
+                || ("POST".equalsIgnoreCase(method) && path.equals("/api/members"))) {
             logger.debug("Bypassing JwtFilter for login endpoint");
             filterChain.doFilter(request, response);
             return;
         }
-// ✅ Nếu là /api/auth/login và đăng ký tài khoản (POST /api/members) → Bỏ qua kiểm tra JWT
-
+        // ✅ Nếu là /api/auth/login và đăng ký tài khoản (POST /api/members) → Bỏ qua
+        // kiểm tra JWT
 
         // ✅ Nếu là đăng ký tài khoản (POST /api/members) → Bỏ qua kiểm tra JWT
         // ĐẶT Ở DƯỚI NÀY THÌ LẠI SAI
         // if ("POST".equalsIgnoreCase(method) && path.equals("/api/members")) {
-        //     filterChain.doFilter(request, response);
-        //     return;
+        // filterChain.doFilter(request, response);
+        // return;
         // }
         // ✅ Nếu là đăng ký tài khoản (POST /api/members) → Bỏ qua kiểm tra JWT
 
@@ -77,11 +83,23 @@ public class JwtFilter extends OncePerRequestFilter {
 
         try {
             String email = jwtUtil.extractEmail(token);
-            logger.debug("Extracted email: {}", email);
-            request.setAttribute("userEmail", email);
+            String roles = jwtUtil.extractRoles(token); // Lấy roles dưới dạng String
+            List<String> roleList = (roles == null || roles.isEmpty()) 
+            ? Collections.emptyList() 
+            : Arrays.asList(roles.split(",")); // Chuyển String thành List, phân tách bằng dấu phẩy
+        logger.debug("Extracted email: {}, roles: {}", email, roleList);
+
+            
+            // Lấy danh sách vai trò từ token bằng jwtUtil.extractRoles(token)
+            // Chuyển roles thành GrantedAuthority
+            List<SimpleGrantedAuthority> authorities = roleList.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
+            logger.debug("Extracted roles: {}", authorities);
+
             // Tạo Authentication và lưu vào SecurityContextHolder
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, null,
-                    Collections.emptyList());
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, null, authorities);
+                    // Collections.emptyList());
             SecurityContextHolder.getContext().setAuthentication(authToken);
             logger.debug("Set authentication for email: {}", email);
 

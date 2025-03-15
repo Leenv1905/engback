@@ -54,7 +54,7 @@ public class AuthController {
             System.out.println("🔐 Mật khẩu trong database: " + user.get().getPassword());
 
             if (memBerService.checkPassword(loginRequest.getPassword(), user.get().getPassword())) {
-                String token = jwtUtil.generateToken(user.get().getEmail());
+                String token = jwtUtil.generateToken(user.get().getEmail(), user.get().getRoles()); // Truyền String roles
                 System.out.println("🔑 Token đã tạo: " + token);
                 return ResponseEntity.ok(new AuthResponse(token));
             } else {

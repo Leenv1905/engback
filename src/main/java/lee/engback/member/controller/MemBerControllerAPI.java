@@ -16,12 +16,12 @@ import java.util.stream.Collectors; // Thêm thư viện này để sử dụng 
 public class MemBerControllerAPI {
 
     @Autowired
-    private MemBerService memBerService; //liên kết thông qua Dependency Injection của Spring
+    private MemBerService memBerService; // liên kết thông qua Dependency Injection của Spring
 
     // KHÔNG DÙNG DTO
     // @GetMapping
-    // public List<MemBer> getAllMembers() {  
-    //     return memBerService.findAll(); // Gọi phương thức findAll() từ MemBerService
+    // public List<MemBer> getAllMembers() {
+    // return memBerService.findAll(); // Gọi phương thức findAll() từ MemBerService
     // }
 
     @GetMapping
@@ -30,11 +30,14 @@ public class MemBerControllerAPI {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
     // KHÔNG DÙNG DTO
     // @GetMapping("/{id}")
     // public ResponseEntity<MemBer> getMemberById(@PathVariable int id) {
-    //     Optional<MemBer> member = memBerService.findById(id); // Gọi phương thức findById() từ MemBerService
-    //     return member.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    // Optional<MemBer> member = memBerService.findById(id); // Gọi phương thức
+    // findById() từ MemBerService
+    // return member.map(ResponseEntity::ok).orElseGet(() ->
+    // ResponseEntity.notFound().build());
     // }
     @GetMapping("/{id}")
     public ResponseEntity<MemBerDTO> getMemberById(@PathVariable int id) {
@@ -46,30 +49,38 @@ public class MemBerControllerAPI {
     // KHÔNG DÙNG DTO
     // @PostMapping
     // public MemBer createMember(@RequestBody MemBer memBer) {
-    //     return memBerService.saveMemBer(memBer); // Gọi phương thức saveMemBer() từ MemBerService
+    // return memBerService.saveMemBer(memBer); // Gọi phương thức saveMemBer() từ
+    // MemBerService
     // }
     @PostMapping
     public MemBerDTO createMember(@RequestBody MemBerDTO memBerDTO) {
         MemBer memBer = convertToEntity(memBerDTO);
+        // Gán vai trò mặc định nếu không có
+        if (memBer.getRoles() == null || memBer.getRoles().isEmpty()) {
+            memBer.setRoles("ROLE_USER");
+        }
         return convertToDTO(memBerService.saveMemBer(memBer));
     }
 
     // KHÔNG DÙNG DTO
     // @PutMapping("/{id}")
-    // public ResponseEntity<MemBer> updateMember(@PathVariable int id, @RequestBody MemBer memBerDetails) {
-    //     Optional<MemBer> member = memBerService.findById(id); // Gọi phương thức findById() từ MemBerService
-    //     if (member.isPresent()) {
-    //         MemBer memBer = member.get();
-    //         memBer.setFullName(memBerDetails.getFullName());
-    //         memBer.setPhoneNumber(memBerDetails.getPhoneNumber());
-    //         memBer.setEmail(memBerDetails.getEmail());
-    //         memBer.setPassword(memBerDetails.getPassword());
-    //         memBer.setDateJoin(memBerDetails.getDateJoin());
-    //         memBer.setBirthDay(memBerDetails.getBirthDay());
-    //         return ResponseEntity.ok(memBerService.saveMemBer(memBer)); // Gọi phương thức saveMemBer() từ MemBerService
-    //     } else {
-    //         return ResponseEntity.notFound().build();
-    //     }
+    // public ResponseEntity<MemBer> updateMember(@PathVariable int id, @RequestBody
+    // MemBer memBerDetails) {
+    // Optional<MemBer> member = memBerService.findById(id); // Gọi phương thức
+    // findById() từ MemBerService
+    // if (member.isPresent()) {
+    // MemBer memBer = member.get();
+    // memBer.setFullName(memBerDetails.getFullName());
+    // memBer.setPhoneNumber(memBerDetails.getPhoneNumber());
+    // memBer.setEmail(memBerDetails.getEmail());
+    // memBer.setPassword(memBerDetails.getPassword());
+    // memBer.setDateJoin(memBerDetails.getDateJoin());
+    // memBer.setBirthDay(memBerDetails.getBirthDay());
+    // return ResponseEntity.ok(memBerService.saveMemBer(memBer)); // Gọi phương
+    // thức saveMemBer() từ MemBerService
+    // } else {
+    // return ResponseEntity.notFound().build();
+    // }
     // }
     @PutMapping("/{id}")
     public ResponseEntity<MemBerDTO> updateMember(@PathVariable int id, @RequestBody MemBerDTO memBerDTO) {
@@ -91,12 +102,14 @@ public class MemBerControllerAPI {
     // KHÔNG DÙNG DTO
     // @DeleteMapping("/{id}")
     // public ResponseEntity<Void> deleteMember(@PathVariable int id) {
-    //     if (memBerService.existsById(id)) { // Gọi phương thức existsById() từ MemBerService
-    //         memBerService.deleteById(id); // Gọi phương thức deleteById() từ MemBerService
-    //         return ResponseEntity.noContent().build();
-    //     } else {
-    //         return ResponseEntity.notFound().build();
-    //     }
+    // if (memBerService.existsById(id)) { // Gọi phương thức existsById() từ
+    // MemBerService
+    // memBerService.deleteById(id); // Gọi phương thức deleteById() từ
+    // MemBerService
+    // return ResponseEntity.noContent().build();
+    // } else {
+    // return ResponseEntity.notFound().build();
+    // }
     // }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMember(@PathVariable int id) {
@@ -118,8 +131,8 @@ public class MemBerControllerAPI {
                 memBer.getEmail(),
                 memBer.getPassword(),
                 memBer.getDateJoin(),
-                memBer.getBirthDay()
-        );
+                memBer.getBirthDay(),
+                memBer.getRoles());
     }
 
     private MemBer convertToEntity(MemBerDTO memBerDTO) {
@@ -131,8 +144,8 @@ public class MemBerControllerAPI {
         memBer.setPassword(memBerDTO.getPassword());
         memBer.setDateJoin(memBerDTO.getDateJoin());
         memBer.setBirthDay(memBerDTO.getBirthDay());
+        memBer.setRoles(memBerDTO.getRoles());
         return memBer;
     }
-
 
 }

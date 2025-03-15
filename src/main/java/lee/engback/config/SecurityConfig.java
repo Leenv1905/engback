@@ -30,7 +30,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/login").permitAll() // ⚠️ Đảm bảo dòng này có mặt permitAll() để mở API login (không cần JWT)
                 .requestMatchers(HttpMethod.POST, "/api/members").permitAll() // Cho phép đăng ký tài khoản mà không cần JWT(phải đặt trên authenticate)
+                .requestMatchers(HttpMethod.GET, "/api/members/**").hasRole("ADMIN") // Chỉ admin xem danh sách member
+                // .requestMatchers(HttpMethod.POST, "/api/newwords/**").hasRole("USER") // User thêm từ mới
+                // Dùng .hasRole("USER") hoặc .hasRole("ADMIN") (không cần tiền tố ROLE_ vì Spring tự thêm)
                 .requestMatchers("/api/members/**").authenticated() // Yêu cầu có JWT để truy cập các API liên quan đến thành viên (đăng ký thì loại trừ bên JwTFilter)
+                // .requestMatchers("/api/members/**").hasRole("ADMIN") // Admin quản lý member
                 .requestMatchers("/api/newwords/**").authenticated() // Các API khác cần đăng nhập(VD đây là các API thêm từ mới)
                 .anyRequest().permitAll()
             )

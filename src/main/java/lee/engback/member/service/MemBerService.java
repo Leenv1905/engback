@@ -5,6 +5,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 // Bảo mật mật khẩu bằng spring security
 import org.springframework.stereotype.Service;
+import lee.engback.auth.AuthController;
 import lee.engback.member.entity.MemBer;
 import lee.engback.member.repository.JpaMemBer;
 
@@ -12,13 +13,29 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+// Sử dụng constructor injection thay vì field injection:
 public class MemBerService {
+    private final JpaMemBer jpaMemBer;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JpaMemBer jpaMemBer;
+    public MemBerService(JpaMemBer jpaMemBer, PasswordEncoder passwordEncoder) {
+        this.jpaMemBer = jpaMemBer;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-    @Autowired
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); // Inject PasswordEncoder
+    // @Autowired
+    // private JpaMemBer jpaMemBer;
+
+    // // @Autowired
+    // // private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    // @Autowired
+    // private PasswordEncoder passwordEncoder; // không dùng final và không khởi tạo trực tiếp
+
+    // MemBerService(AuthController authController) {
+    //     this.authController = authController;
+    // } // Inject PasswordEncoder
     // Bảo mật mật khẩu bằng spring security
 
     // public MemBer saveMemBer(MemBer memBer) {
@@ -30,6 +47,9 @@ public class MemBerService {
     public MemBer saveMemBer(MemBer memBer) {
         memBer.setDateJoin(new java.sql.Date(System.currentTimeMillis()));
         memBer.setPassword(passwordEncoder.encode(memBer.getPassword())); // Mã hóa mật khẩu
+        if (memBer.getRoles() == null || memBer.getRoles().isEmpty()) {
+            memBer.setRoles("ROLE_USER");  // Gán vai trò mặc định trước khi lưu
+        }
         return jpaMemBer.save(memBer);
     }
 
@@ -64,6 +84,10 @@ public class MemBerService {
     public boolean existsById(int id) {
         return jpaMemBer.existsById(id);
     }
+ //phương thức lấy member theo vai trò
+    public List<MemBer> findByRoles(String roles) {
+        return jpaMemBer.findByRolesContaining(roles);
+    }
 
     // CHỖ NÀY THÊM TẠM, XONG PHẢI XÓA ĐI
     // public void testEncodePassword() {
@@ -72,7 +96,7 @@ public class MemBerService {
     //     System.out.println("Mật khẩu mã hóa: " + encodedPassword);} 
     // CHỖ NÀY THÊM TẠM, XONG PHẢI XÓA ĐI
 
-    // ĐOẠN NÀY THÊM ĐỂ PHỤC VỤ ĐOẠN TAMK BÊN AUTHCONTROLLER
+    // ĐOẠN NÀY THÊM ĐỂ PHỤC VỤ ĐOẠN TẠM BÊN AUTHCONTROLLER
     // public String encodePassword(String password) {
     // // TODO Auto-generated method stub
     // throw new UnsupportedOperationException("Unimplemented method
