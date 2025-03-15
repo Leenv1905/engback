@@ -17,6 +17,7 @@ public class CorsConfig {
                         .allowedOrigins("http://localhost:3000") // Cho phép frontend Next.js truy cập
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Các phương thức HTTP được phép
                         .allowedHeaders("*") // Cho phép tất cả các headers
+                        // .allowedHeaders("Authorization", "Content-Type") // Cho phép header Authorization (chứa token JWT)
                         .allowCredentials(true); // Cho phép gửi cookie hoặc token (nếu có)
             }
         };

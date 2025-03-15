@@ -46,26 +46,9 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        logger.debug("Processing request: {}", request.getRequestURI());
-
         String path = request.getRequestURI();
         String method = request.getMethod();
-
-        // Bỏ qua yêu cầu OPTIONS
-        if ("OPTIONS".equalsIgnoreCase(method)) {
-            logger.debug("Bypassing JwtFilter for OPTIONS request: {}", path);
-            filterChain.doFilter(request, response);
-            return;
-        }
-        // Bỏ qua yêu cầu OPTIONS
-
-
-        // if (path.equals("/api/auth/login") || 
-        //     ("POST".equalsIgnoreCase(method) && path.equals("/api/members"))) {
-        //     logger.debug("Bypassing JwtFilter for endpoint: {}", path);
-        //     filterChain.doFilter(request, response);
-        //     return;
-        // }
+        logger.debug("Processing request: {}", request.getRequestURI());
 
         // ✅ Nếu là /api/auth/login và đăng ký tài khoản (POST /api/members) → Bỏ qua
         // kiểm tra JWT
@@ -101,11 +84,12 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             String email = jwtUtil.extractEmail(token);
             String roles = jwtUtil.extractRoles(token); // Lấy roles dưới dạng String
-            List<String> roleList = (roles == null || roles.isEmpty())
-                    ? Collections.emptyList()
-                    : Arrays.asList(roles.split(",")); // Chuyển String thành List, phân tách bằng dấu phẩy
-            logger.debug("Extracted email: {}, roles: {}", email, roleList);
+            List<String> roleList = (roles == null || roles.isEmpty()) 
+            ? Collections.emptyList() 
+            : Arrays.asList(roles.split(",")); // Chuyển String thành List, phân tách bằng dấu phẩy
+        logger.debug("Extracted email: {}, roles: {}", email, roleList);
 
+            
             // Lấy danh sách vai trò từ token bằng jwtUtil.extractRoles(token)
             // Chuyển roles thành GrantedAuthority
             List<SimpleGrantedAuthority> authorities = roleList.stream()
@@ -114,14 +98,10 @@ public class JwtFilter extends OncePerRequestFilter {
             logger.debug("Extracted roles: {}", authorities);
 
             // Tạo Authentication và lưu vào SecurityContextHolder
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, null,
-                    authorities);
-            // Collections.emptyList());
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, null, authorities);
+                    // Collections.emptyList());
             SecurityContextHolder.getContext().setAuthentication(authToken);
             logger.debug("Set authentication for email: {}", email);
-
-            // Thêm email vào request attribute để controller sử dụng, tạo điều kiện lấy email từ token mà không cần truy vấn database
-            request.setAttribute("userEmail", email);
 
             filterChain.doFilter(request, response);
         } catch (JwtException e) {

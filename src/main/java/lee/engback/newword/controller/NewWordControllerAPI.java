@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.*;
 import lee.engback.newword.entity.NewWord;
 import lee.engback.newword.model.NewWordDTO;
 import lee.engback.newword.service.NewWordService;
+import lee.engback.member.service.MemBerService;
+import lee.engback.member.entity.MemBer;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,56 +24,70 @@ public class NewWordControllerAPI {
     @Autowired
     private NewWordService newWordService; // liên kết thông qua Dependency Injection của Spring
 
+    @Autowired
+    private MemBerService memBerService;
+
+    //   🔹 Lấy tất cả từ vựng của user từ token 
     @GetMapping
-    public List<NewWordDTO> getAllNewWords() {
-        return newWordService.findAll().stream()
+    public List<NewWordDTO> getUserNewWords(@RequestAttribute("userEmail") String email) {
+        int maMember = getMaMemberFromEmail(email);
+        return newWordService.findByMaMember(maMember).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
-        // Thêm endpoint để tìm kiếm theo maMember
-        @GetMapping("/{maMember}")
-        public List<NewWordDTO> getNewWordsByMaMember(@PathVariable int maMember) {
-            return newWordService.findByMaMember(maMember).stream()
-                    .map(this::convertToDTO)
-                    .collect(Collectors.toList());
-        }
-
+        // Lấy từ vựng theo ID, chỉ cho phép xem của chính user
     @GetMapping("/{id}")
-    public ResponseEntity<NewWordDTO> getNewWordById(@PathVariable int id) {
+    public ResponseEntity<NewWordDTO> getNewWordById(@PathVariable int id, @RequestAttribute("userEmail") String email) {
+        int maMember = getMaMemberFromEmail(email);
         Optional<NewWord> newWord = newWordService.findById(id);
-        return newWord.map(value -> ResponseEntity.ok(convertToDTO(value)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return newWord.filter(word -> word.getMaMember() == maMember)
+                .map(value -> ResponseEntity.ok(convertToDTO(value)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.FORBIDDEN).build());
     }
 
-    @PostMapping
-    public NewWordDTO createNewWord(@RequestBody NewWordDTO newWordDTO) {
-        NewWord newWord = convertToEntity(newWordDTO);
-        return convertToDTO(newWordService.saveNewWord(newWord));
-    }
+// 🔹 Thêm từ vựng (tự động gán maMember từ token)
+@PostMapping // POST /api/newwords
+public ResponseEntity<NewWordDTO> createNewWord(@RequestAttribute("userEmail") String email, @RequestBody NewWordDTO newWordDTO) {
+    int maMember = getMaMemberFromEmail(email);
+    NewWord newWord = convertToEntity(newWordDTO);
+    newWord.setMaMember(maMember);
+    return ResponseEntity.ok(convertToDTO(newWordService.saveNewWord(newWord)));
+}
 
+    // 🔹 Cập nhật từ vựng, chỉ cho phép chỉnh sửa của chính user
     @PutMapping("/{id}")
-    public ResponseEntity<NewWordDTO> updateNewWord(@PathVariable int id, @RequestBody NewWordDTO newWordDTO) {
+    public ResponseEntity<NewWordDTO> updateNewWord(@PathVariable int id, @RequestAttribute("userEmail") String email, @RequestBody NewWordDTO newWordDTO) {
+        int maMember = getMaMemberFromEmail(email);
         Optional<NewWord> newWord = newWordService.findById(id);
-        if (newWord.isPresent()) {
+
+        if (newWord.isPresent() && newWord.get().getMaMember() == maMember) {
             NewWord updatedNewWord = newWord.get();
             updatedNewWord.setWord(newWordDTO.getWord());
             updatedNewWord.setMeaning(newWordDTO.getMeaning());
             updatedNewWord.setDate(newWordDTO.getDate());
-            updatedNewWord.setMaMember(newWordDTO.getMaMember());
             return ResponseEntity.ok(convertToDTO(newWordService.saveNewWord(updatedNewWord)));
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    // 🔹 Xóa từ vựng, chỉ cho phép xóa của chính user
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNewWord(@PathVariable int id) {
-        if (newWordService.existsById(id)) {
+    public ResponseEntity<Void> deleteNewWord(@PathVariable int id, @RequestAttribute("userEmail") String email) {
+        int maMember = getMaMemberFromEmail(email);
+        Optional<NewWord> newWord = newWordService.findById(id);
+
+        if (newWord.isPresent() && newWord.get().getMaMember() == maMember) {
             newWordService.deleteById(id);
             return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    // 🔹 Chuyển email -> maMember (nếu không tìm thấy, trả lỗi 403)
+    private int getMaMemberFromEmail(String email) {
+        return memBerService.findByEmail(email)
+                .map(MemBer::getId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized"));
     }
 
     private NewWordDTO convertToDTO(NewWord newWord) {

@@ -28,6 +28,8 @@ public class SecurityConfig {
         return http
             .csrf(csrf -> csrf.disable()) // Tắt CSRF để tránh lỗi với Postman
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Cho phép preflight requests. cho phép OPTIONS request (cho CORS) và cho phép truy cập /api/auth/login mà không cần token:
+                // khi frontend gửi sẽ gửi option trước header nên ko có sự cho phéo này sẽ lỗi
                 .requestMatchers("/api/auth/login").permitAll() // ⚠️ Đảm bảo dòng này có mặt permitAll() để mở API login (không cần JWT)
                 .requestMatchers(HttpMethod.POST, "/api/members").permitAll() // Cho phép đăng ký tài khoản mà không cần JWT(phải đặt trên authenticate)
                 .requestMatchers(HttpMethod.GET, "/api/members/**").hasRole("ADMIN") // Chỉ admin xem danh sách member
