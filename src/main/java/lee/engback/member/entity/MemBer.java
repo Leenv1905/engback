@@ -1,5 +1,5 @@
 package lee.engback.member.entity;
-
+// Nếu bạn dùng Hibernate để tự động tạo bảng, chỉ cần khởi động lại ứng dụng sau khi sửa entity.
 import java.sql.Date;
 // import static java.io.IO.print;
 import jakarta.persistence.Entity;

@@ -1,5 +1,5 @@
 package lee.engback.auth;
-
+// FILE NÀY ĐỂ TẠO RA TOKEN JWT
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 

@@ -3,6 +3,7 @@ package lee.engback.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,8 +28,10 @@ public class SecurityConfig {
         return http
             .csrf(csrf -> csrf.disable()) // Tắt CSRF để tránh lỗi với Postman
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login").permitAll() // ⚠️ Đảm bảo dòng này có mặt
-                .requestMatchers("/api/newwords/**").authenticated() // Các API khác cần đăng nhập
+                .requestMatchers("/api/auth/login").permitAll() // ⚠️ Đảm bảo dòng này có mặt permitAll() để mở API login (không cần JWT)
+                .requestMatchers(HttpMethod.POST, "/api/members").permitAll() // Cho phép đăng ký tài khoản mà không cần JWT(phải đặt trên authenticate)
+                .requestMatchers("/api/members/**").authenticated() // Yêu cầu có JWT để truy cập các API liên quan đến thành viên (đăng ký thì loại trừ bên JwTFilter)
+                .requestMatchers("/api/newwords/**").authenticated() // Các API khác cần đăng nhập(VD đây là các API thêm từ mới)
                 .anyRequest().permitAll()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Thêm JwtFilter

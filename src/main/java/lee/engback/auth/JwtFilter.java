@@ -42,14 +42,26 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-                logger.debug("Processing request: {}", request.getRequestURI());
-        // Bỏ qua JwtFilter cho /api/auth/login
-        if (request.getRequestURI().equals("/api/auth/login")) {
+                String path = request.getRequestURI();
+                String method = request.getMethod();
+        logger.debug("Processing request: {}", request.getRequestURI());
+
+// ✅ Nếu là /api/auth/login và đăng ký tài khoản (POST /api/members) → Bỏ qua kiểm tra JWT
+        if (request.getRequestURI().equals("/api/auth/login") || ("POST".equalsIgnoreCase(method) && path.equals("/api/members"))) {
             logger.debug("Bypassing JwtFilter for login endpoint");
             filterChain.doFilter(request, response);
             return;
         }
-        // Không chặn API login vì logion chưa cần token
+// ✅ Nếu là /api/auth/login và đăng ký tài khoản (POST /api/members) → Bỏ qua kiểm tra JWT
+
+
+        // ✅ Nếu là đăng ký tài khoản (POST /api/members) → Bỏ qua kiểm tra JWT
+        // ĐẶT Ở DƯỚI NÀY THÌ LẠI SAI
+        // if ("POST".equalsIgnoreCase(method) && path.equals("/api/members")) {
+        //     filterChain.doFilter(request, response);
+        //     return;
+        // }
+        // ✅ Nếu là đăng ký tài khoản (POST /api/members) → Bỏ qua kiểm tra JWT
 
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
         logger.debug("Authorization header: {}", token);
@@ -68,7 +80,8 @@ public class JwtFilter extends OncePerRequestFilter {
             logger.debug("Extracted email: {}", email);
             request.setAttribute("userEmail", email);
             // Tạo Authentication và lưu vào SecurityContextHolder
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, null, Collections.emptyList());
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, null,
+                    Collections.emptyList());
             SecurityContextHolder.getContext().setAuthentication(authToken);
             logger.debug("Set authentication for email: {}", email);
 

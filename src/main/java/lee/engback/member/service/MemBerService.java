@@ -38,8 +38,9 @@ public class MemBerService {
     public boolean checkPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword); // Dùng BCrypt
         // để kiểm tra mật khẩu
-        // return rawPassword.equals(encodedPassword); // Không mã hóa, so sánh trực tiếp, DÙng tạm khi mật khẩu trong
-                                                    // database chưa mã hóa
+        // return rawPassword.equals(encodedPassword); // Không mã hóa, so sánh trực
+        // tiếp, DÙng tạm khi mật khẩu trong
+        // database chưa mã hóa
     }
     // BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
     // return passwordEncoder.matches(rawPassword, encodedPassword);
@@ -64,19 +65,18 @@ public class MemBerService {
         return jpaMemBer.existsById(id);
     }
 
-     // CHỖ NÀY THÊM TẠM, XONG PHẢI XÓA ĐI
-    //  public void testEncodePassword() {
+    // CHỖ NÀY THÊM TẠM, XONG PHẢI XÓA ĐI
+    // public void testEncodePassword() {
     //     String rawPassword = "123456";
     //     String encodedPassword = passwordEncoder.encode(rawPassword);
-    //     System.out.println("Mật khẩu mã hóa: " + encodedPassword);
-    
-    // }  // CHỖ NÀY THÊM TẠM, XONG PHẢI XÓA ĐI
+    //     System.out.println("Mật khẩu mã hóa: " + encodedPassword);} 
+    // CHỖ NÀY THÊM TẠM, XONG PHẢI XÓA ĐI
 
-    
     // ĐOẠN NÀY THÊM ĐỂ PHỤC VỤ ĐOẠN TAMK BÊN AUTHCONTROLLER
     // public String encodePassword(String password) {
-    //     // TODO Auto-generated method stub
-    //     throw new UnsupportedOperationException("Unimplemented method 'encodePassword'");
+    // // TODO Auto-generated method stub
+    // throw new UnsupportedOperationException("Unimplemented method
+    // 'encodePassword'");
     // }
     // ĐOẠN NÀY THÊM ĐỂ PHỤC VỤ ĐOẠN TAMK BÊN AUTHCONTROLLER
 
