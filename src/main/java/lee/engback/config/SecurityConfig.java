@@ -8,9 +8,14 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lee.engback.auth.JwtFilter;
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +45,10 @@ public class SecurityConfig {
                 .requestMatchers("/api/newwords/**").authenticated() // Các API khác cần đăng nhập(VD đây là các API thêm từ mới)
                 .anyRequest().permitAll()
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Thêm JwtFilter
+            // .exceptionHandling(exception -> exception
+            //     .authenticationEntryPoint(customAuthenticationEntryPoint()) // Sử dụng Entry Point tùy chỉnh để bắt đăng nhập khi chưa đăng nhập
+            // )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class) // Thêm JwtFilter
             .build();
     }
 
@@ -52,6 +60,17 @@ public class SecurityConfig {
     }
     // khai báo phần này để sử dụng mã hóa mật khẩu
 
+    // Phần này để điều hướng đến login khi chưa đăng nhập
+//  @Bean
+//     public AuthenticationEntryPoint customAuthenticationEntryPoint() {
+//         return new AuthenticationEntryPoint() {
+//             @Override
+//             public void commence(HttpServletRequest request, HttpServletResponse response, org.springframework.security.core.AuthenticationException authException) throws IOException {
+//                 response.setStatus(HttpServletResponse.SC_FOUND); // HTTP 302 Found
+//                 response.setHeader("Location", "http://localhost:3000/user/login"); // URL trang đăng nhập
+//             }
+//         };
+//     }
 }
 
 // Mở /api/auth/login cho tất cả

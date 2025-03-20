@@ -1,10 +1,9 @@
-package lee.engback.member.repository;
+package lee.engback.member;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import lee.engback.member.entity.MemBer;
 
 public interface JpaMemBer extends JpaRepository<MemBer, Integer>
 {

@@ -1,4 +1,4 @@
-package lee.engback.member.entity;
+package lee.engback.member;
 
 // Nếu bạn dùng Hibernate để tự động tạo bảng, chỉ cần khởi động lại ứng dụng sau khi sửa entity.
 import java.sql.Date;
@@ -33,7 +33,7 @@ public class MemBer {
     {
         // đảm bảo rằng một số trường thông tin quan trọng không bị NULL
         // khi nó được dùng để cung cấp dữ liệu ra bên ngoài.
-        // Ví dụ: Cầu Thủ chưa cập nhật thông tin tỉnh thành.
+        // Ví dụ: từ mới chưa cập nhật thông tin member.
         this.fullName = "(chưa xác định)";
         this.roles = "ROLE_USER"; // Vai trò mặc định là người dùng
     }

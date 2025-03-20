@@ -1,11 +1,8 @@
-package lee.engback.member.controller;
+package lee.engback.member;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import lee.engback.member.entity.MemBer; // Dùng cả Entity và DTO
-import lee.engback.member.model.MemBerDTO; // Dùng cả Entity và DTO
-import lee.engback.member.service.MemBerService;
 
 import java.util.List;
 import java.util.Optional;

@@ -31,6 +31,8 @@ public class JwtUtil {
                 .issuedAt(new Date())
                 .claim("roles", roles) // Thêm danh sách vai trò vào token
                 .expiration(new Date(System.currentTimeMillis() + 86400000)) // 1 ngày
+                // .expiration(new Date(System.currentTimeMillis() + 1000)) // 1 ngày
+
                 .signWith(key) // Dùng khóa mạnh
                 .signWith(key, Jwts.SIG.HS384) // Rõ ràng dùng HS384
                 .compact();

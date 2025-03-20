@@ -1,9 +1,7 @@
-package lee.engback.newword.service;
+package lee.engback.newword;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import lee.engback.newword.entity.NewWord;
-import lee.engback.newword.repository.JpaNewWord;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package lee.engback.member.model;
+package lee.engback.member;
 
 import java.sql.Date;
 

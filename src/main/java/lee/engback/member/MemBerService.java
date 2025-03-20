@@ -1,4 +1,4 @@
-package lee.engback.member.service;
+package lee.engback.member;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -6,8 +6,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 // Bảo mật mật khẩu bằng spring security
 import org.springframework.stereotype.Service;
 import lee.engback.auth.AuthController;
-import lee.engback.member.entity.MemBer;
-import lee.engback.member.repository.JpaMemBer;
 
 import java.util.List;
 import java.util.Optional;

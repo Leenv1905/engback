@@ -2,7 +2,7 @@
 
 // Dưới đây là một ví dụ về cách tạo tệp model cho NewWord khi sử dụng Spring Data JPA. Tôi sẽ cung cấp cả thực thể NewWord và lớp DTO NewWordDTO.
 
-package lee.engback.newword.model;
+package lee.engback.newword;
 
 import java.sql.Date;
 

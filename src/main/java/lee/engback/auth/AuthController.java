@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import lee.engback.member.entity.MemBer;
-import lee.engback.member.service.MemBerService;
+import lee.engback.member.MemBer;
+import lee.engback.member.MemBerService;
 
 import java.util.Optional;
 

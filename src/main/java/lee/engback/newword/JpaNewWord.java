@@ -1,9 +1,8 @@
-package lee.engback.newword.repository;
+package lee.engback.newword;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import lee.engback.newword.entity.NewWord;
 
 public interface JpaNewWord extends JpaRepository<NewWord, Integer>
 {

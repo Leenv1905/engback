@@ -1,13 +1,12 @@
-package lee.engback.newword.controller;
+package lee.engback.newword;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import lee.engback.newword.entity.NewWord;
-import lee.engback.newword.model.NewWordDTO;
-import lee.engback.newword.service.NewWordService;
-import lee.engback.member.service.MemBerService;
-import lee.engback.member.entity.MemBer;
+
+import lee.engback.member.MemBer;
+import lee.engback.member.MemBerService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 

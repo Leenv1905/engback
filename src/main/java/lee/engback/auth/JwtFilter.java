@@ -95,7 +95,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        token = token.substring(7);
+        token = token.substring(7);  // Loại bỏ tiền tố "Bearer "
         logger.debug("Extracted token: {}", token);
 
         try {
@@ -127,8 +127,17 @@ public class JwtFilter extends OncePerRequestFilter {
         } catch (JwtException e) {
             logger.error("Invalid token: {}", e.getMessage());
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Token không hợp lệ!");
+            // redirectToLogin(response);  // điều hướng
         }
     }
+
+    // Ở đây Filter đang bắt tất cả truy vấn đến các api nếu chưa đăng nhập thì ko cho làm gì cả
+    // ví dụ ở trang Learn trên frontend có truy cập đến /api/newwords
+    // Tuy nhiên kể cả chưa bấm save vẫn bị bắt sống
+    // private void redirectToLogin(HttpServletResponse response) throws IOException {
+    //     response.setStatus(HttpStatus.FOUND.value()); // HTTP 302 Found
+    //     response.setHeader("Location", "http://localhost:3000/user/login"); // URL trang đăng nhập
+    // }
 }
 
 // Filter này giúp:

@@ -1,4 +1,4 @@
-package lee.engback.newword.entity;
+package lee.engback.newword;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lee.engback.member.entity.MemBer;
+import lee.engback.member.MemBer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,7 +39,7 @@ public class NewWord {
     {
         // đảm bảo rằng một số trường thông tin quan trọng không bị NULL
         // khi nó được dùng để cung cấp dữ liệu ra bên ngoài.
-        // Ví dụ: Cầu Thủ chưa cập nhật thông tin tỉnh thành.
+        // Ví dụ: từ mới chưa cập nhật thông tin member.
         // this.word = "(chưa xác định)";
         // this.date = new Date(System.currentTimeMillis());
         // Tự động thiết lập ngày hiện tại khi tạo đối tượng mới
